@@ -6,6 +6,7 @@ include("platforms.jl")
 	function segment_se_croisent(segment1, segment2)
 	
 Renvoie un booléen, indiquant si les segments se croisent. Les segments sont représenté par un couple/tableau de positions
+Les positions sont représentés par des couples ou des tableaux x,y
 """
 function segment_se_croisent(segment1, segment2, bord_inclus=true)
 	#Cf brouillon
