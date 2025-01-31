@@ -1,5 +1,5 @@
 using LinearAlgebra: norm
-using Ludivine
+include("ludivine.jl")
 
 """
 	function segment_se_croisent(segment1, segment2)
@@ -24,16 +24,32 @@ end
 Renvoie la liste des voisins du nouveau goos, placé en pos_new. Met à jour les voisins 
 des goos pour éventuellement ajouter un lien vers le dernier. 
 
-Les plateformes sont représentées par des indices négatifs, qui correspondent à l'opposé de leur index dans plateforms"""
+Si le goo peut être ajouté, il l'est et est renvoyé. Sinon on renvoie nothing (peut changer dans les versions futures)"""
 function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
+	index_new_goo = length(goos) +1
 	voisins = Tuple{Int, Float64}[]
 	for (i, goo) ∈ enumerate(goos)
 		#Si la distance au goo est inférieure à 20cm, l'ajouter en voisin
 		if norm(pos_new .- goo.position)<0.20
 			push!(voisins, (i, norm(pos_new .- goo.position)))
+			push!(goo.neighbors, (index_new_goo, norm(pos_new .- goo.position)))
 		end
 	end
-
-
+	
+	for (i, plateforme) in enumerate(plateforms)
+		 #TODO
+	end
+	
+	if true #length(voisins) >0 #TODO, faut remettre la vrai condition
+		nouveau = Goo(pos_new,
+		(0.0,0.0),
+		voisins,
+		[])
+		push!(goos, nouveau)
+		nouveau
+	else
+		nothing
+	end
+		
 end
 
