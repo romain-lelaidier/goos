@@ -21,5 +21,5 @@ function projection((x,y)::Tuple{Float64,Float64}, p::Platform)
     #gestion de la coordonnée y
     res_y = y < p.y_bottom ? p.y_bottom : (y > p.y_top ? p.y_top : y)
 
-    res_x,res_y
+    (res_x,res_y)
 end
