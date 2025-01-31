@@ -5,3 +5,5 @@ Il utilise les fichiers platforms, dynamique et liens.
 Le fichier dynamique modélise les goos et leur mouvement.
 Le fichier liens modélise les liens entre les goos.
 Le fichier platforms modélise les plateformes et leurs liens avec les goos.
+
+ATTENTION : Attendre quelques secondes avant de poser le premier Goo.
