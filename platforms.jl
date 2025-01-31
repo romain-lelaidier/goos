@@ -160,7 +160,7 @@ function static_collision((x,y)::Tuple{Float64,Float64}, (vx,vy)::Tuple{Float64,
         i = 0
 
         # trouver de quel bord il s'agit
-        while isnothing(interpos) && i <= 4
+        while isnothing(interpos) && i <= 3
             i += 1
             interpos = intersection_segments(((x,y),(xp,yp)),bords[i])
         end
