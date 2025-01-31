@@ -68,13 +68,13 @@ end
 """Ce sont des rectangles, dont les coins sont :
     topleft::Tuple{Float64, Float64}
     bottomright::Tuple{Float64, Float64}"""
-struct plateform
-    topleft::Tuple{Float64, Float64}
-    bottomright::Tuple{Float64, Float64}
+struct Platform
+    topleft::Tuple{Float64, Float64} #x,y
+    bottomright::Tuple{Float64, Float64} #x,y
 end
 
 
-function liens(goo:Goo)
+function liens(goo::Goo)
 
 end
 
@@ -106,7 +106,7 @@ end
     function ajouter_goo!(goos, plateformes, position)
 FONCTION TEST EN BACK-UP.
 """
-function ajouter_goo!(goos, plateformes, position)
+function ajouter_goos!(goos, plateformes, position)
     velocity = (0.0, 0.0)
     neighbors = Vector{Tuple{Int, Float64}}()
     plateform_n = Vector{Tuple{Int, Tuple{Float64, Float64}, Float64}}()
