@@ -1,7 +1,11 @@
+using LinearAlgebra: norm
+using Polynomials
+
 # Constantes du problème
 g = 9.81 / 20  # Gravité 
 k = 100.0      # Raideur du ressort (J/m²)
 m = 0.4        # Masse des Goos (400 g)
+fr = 1         # Constante 
 
 # Structure pour représenter un Goo
 mutable struct Goo
@@ -25,9 +29,13 @@ function forces(goos)
 
         # Gravité
         Fg = (0.0, -m*g)
+        
+        # Force de frottements
+        Ff = - fr .* goo.velocity
 
-        # Force des ressorts
+        # Force des ressorts & répulsion entre les Goos lorsqu'ils sont trop proches (modélisation des collisions)
         Fr = (0.0, 0.0)
+        F_repulsion = (0.0, 0.0)
 
         for (j, l0) in goo.neighbors
             neighbor = goos[j]
@@ -39,6 +47,12 @@ function forces(goos)
                 direction = (d[1] / dist, d[2] / dist)
                 Fr = (Fr[1] + f * direction[1], Fr[2] + f * direction[2])
             end
+
+            if dist < 0.4
+                repulsion = 1/dist^3
+                F_repulsion =(F_repulsion[1] + repulsion * direction[1], F_repulsion[2] +  repulsion * direction[2])
+            end
+
         end
 
         # Force des ressorts des plateformes
@@ -57,7 +71,7 @@ function forces(goos)
 
 
         # Mise à jour des équations du mouvement
-        acc = ((Fg[1] + Fr[1] + Fp[1]) / m, (Fg[2] + Fr[2] + Fp[2]) / m)
+        acc = ((Fg[1] + Fr[1] + Fp[1] + Ff[1]) / m, (Fg[2] + Fr[2] + Fp[2] + Ff[2]) / m)
         a[i] = acc
 
     end    
@@ -74,22 +88,31 @@ end
     function update_positions(goos, dt)
 Met à jour la position et la vitesse des goos après un pas de temps dt.
 """
-function update_positions!(goos, dt)
+function update_positions!(goos, platforms, dt)
     a = forces(goos)
 
     for i in 1:length(goos)
         goo = goos[i]
-        acc = a[i]
+        collision = nothing
+        for p in platforms
+            collision = static_collision(goo.position, goo.velocity, p, dt)
+        end
+        if isnothing(collision) #pas de collision avec une plateforme
+            acc = a[i]
 
-        # Mise à jour de la vitesse (Euler)
-        new_velocity = (goo.velocity[1] + acc[1] * dt, goo.velocity[2] + acc[2] * dt)
+            # Mise à jour de la vitesse (Euler)
+            new_velocity = (goo.velocity[1] + acc[1] * dt, goo.velocity[2] + acc[2] * dt)
         
-        # Mise à jour de la position (Euler)
-        new_position = (goo.position[1] + new_velocity[1] * dt, goo.position[2] + new_velocity[2] * dt)
+            # Mise à jour de la position (Euler)
+            new_position = (goo.position[1] + new_velocity[1] * dt, goo.position[2] + new_velocity[2] * dt)
 
-        # Appliquer la mise à jour
-        goo.velocity = new_velocity
-        goo.position = new_position
+            # Appliquer la mise à jour
+            goo.velocity = new_velocity
+            goo.position = new_position
+        else
+            goo.position = collision[1]
+            goo.velocity = collision[2]
+        end
     end
 end
 
@@ -115,3 +138,4 @@ function ajouter_goo!(goos, plateformes, position)
     # Ajouter le Goo à la liste
     push!(goos, Goo(position, velocity, neighbors, plateform_n))
 end
+
