@@ -43,7 +43,7 @@ function new_goos!(goos::Vector{Goo}, plateforms, obstacles, pos_new)
 
 	#Vérification qu'on n'est pas trop proche
 	for (_, goo) ∈ enumerate(goos)
-		norm(pos_new .- goo.position) >=0.02 || error("Pas de Goo sur un autre")
+		norm(pos_new .- goo.position) >=0.02 || return nothing # error("Pas de Goo sur un autre")
 	end
 
 
@@ -111,7 +111,7 @@ function new_goos!(goos::Vector{Goo}, plateforms, obstacles, pos_new)
 		push!(goos, nouveau)
 		return nouveau
 	else
-		error("Pas le droit de mettre un goo ici, il ne crée pas de lien ! pos : $pos_new")
+		return nothing # error("Pas le droit de mettre un goo ici, il ne crée pas de lien ! pos : $pos_new")
 	end
 end
 
