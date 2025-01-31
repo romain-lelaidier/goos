@@ -70,8 +70,7 @@ function forces(goos)
 
 
         # Mise à jour des équations du mouvement
-        # acc = ((Fg[1] + Fr[1] + Fp[1] + Ff[1]) / m, (Fg[2] + Fr[2] + Fp[2] + Ff[2]) / m)
-        acc = ((Fg[1]) / m, (Fg[2]) / m)
+        acc = ((Fg[1] + Fr[1] + Fp[1] + Ff[1]) / m, (Fg[2] + Fr[2] + Fp[2] + Ff[2]) / m)
         a[i] = acc
 
     end    
