@@ -1,4 +1,4 @@
-
+using LinearAlgebra:det
 
 """Ce sont des rectangles, dont les coins sont donnés par:
     x_left, x_right, y_bottom, y_top"""
@@ -53,6 +53,12 @@ function segment_se_croisent(segment1, segment2, bord_inclus=true)
 	p1s2, p2s2 = segment2
 	matA = hcat(collect(p1s1 .- p2s1), collect(p2s2 .- p1s2))
 	matB = collect(p2s2 .- p2s1)
+
+    #cas parallèle
+    if det(matA) == 0
+        return false
+    end
+
 	#On résout matA X = mat B
 	x = matA \ matB
 
@@ -77,6 +83,12 @@ function intersection_segments(segment1, segment2)
 	p1s2, p2s2 = segment2
 	matA = hcat(collect(p1s1 .- p2s1), collect(p2s2 .- p1s2))
 	matB = collect(p2s2 .- p2s1)
+
+    # cas parallèle
+    if det(matA) == 0
+        return nothing
+    end
+
 	#On résout matA X = mat B
 	x = matA \ matB
 
