@@ -30,8 +30,8 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 	index_new_goo = length(goos) +1 #
 	voisins = Tuple{Int, Float64}[]
 	for (i, goo) ∈ enumerate(goos)
-		#Si la distance au goo est inférieure à 20cm, l'ajouter en voisin
-		if norm(pos_new .- goo.position)<0.20
+		# Si la distance au goo est inférieure à 20 cm, l'ajouter en voisin
+		if norm(pos_new .- goo.position) < 0.20
 			push!(voisins, (i, norm(pos_new .- goo.position)))
 			push!(goo.neighbors, (index_new_goo, norm(pos_new .- goo.position)))
 		end
@@ -48,11 +48,8 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 	
 	end
 	
-	if true #length(voisins) >0 #TODO, faut remettre la vrai condition
-		nouveau = Goo(pos_new,
-		(0.0,0.0),
-		voisins,
-		[])
+	if not(isempty(neighbors) && isempty(plateform_n))
+		nouveau = Goo(pos_new, (0.0,0.0), voisins, [])
 		push!(goos, nouveau)
 		nouveau
 	else
