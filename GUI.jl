@@ -34,7 +34,7 @@ borders = [
     Border(  Wm, Wm+dbd, -dbd, Hm+dbd),   # right border
     Border(-dbd, Wm+dbd, -dbd,    0.0),   # bottom border
     Border(-dbd, Wm+dbd,   Hm, Hm+dbd),   # top border
-    Border(Wm/2, Wm/2+dbd,   Hm, Hm/2),   # Extra border for more fun
+    #Border(Wm/2, Wm/2+dbd,   Hm, Hm/2),   # Extra border for more fun
 ]
 platforms = [
     GooPlatform(0.0, 0.2, 0.2, 0.3),
@@ -66,7 +66,7 @@ on(events(scene).mousebutton) do event
         if event.action == Mouse.release
             # adding a Goo
             mp = events(scene).mouseposition[]
-            new_goos!(goos, platforms, collidable, pixelsToPos(mp))
+            new_goos!(goos, platforms, borders, pixelsToPos(mp))
         end
     end
 end
