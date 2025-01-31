@@ -74,7 +74,7 @@ struct plateform
 end
 
 
-function liens(goo:Goo)
+function liens(goo::Goo)
 
 end
 
