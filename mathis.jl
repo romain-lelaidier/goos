@@ -31,10 +31,14 @@ des goos pour éventuellement ajouter un lien vers le dernier.
 
 Si le goo peut être ajouté, il l'est et est renvoyé. Sinon on renvoie nothing (peut changer dans les versions futures)"""
 function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
-	#TODO : vérifier qu'on n'est pas dans une plateforme
+	#On vérifie qu'on n'est pas dans une plateforme
+	for plateform ∈ plateforms
+		!in_platform(pos_new, plateform) || error("Vous avez essayé de mettre le goo dans une plateforme")
+	end
 
 	index_new_goo = length(goos) +1 #
 	voisins = Tuple{Int, Float64}[]
+	#On ajoute les liens vers les voisins
 	for (i, goo) ∈ enumerate(goos)
 		# Si la distance au goo est inférieure à 20 cm, l'ajouter en voisin
 		if norm(pos_new .- goo.position) < 0.20
@@ -43,7 +47,7 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 		end
 	end
 	
-
+	#On ajoute les liens vers les plateformes
 	liens_plateformes = Tuple{Int, Tuple{Float64, Float64}, Float64}[]
 	for (i, plateforme) in enumerate(plateforms)
 		 closest = projection(pos_new, plateforme)
@@ -54,13 +58,12 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 	
 	end
 	
-	if not(isempty(neighbors) && isempty(plateform_n))
-		nouveau = Goo(pos_new, (0.0,0.0), voisins, [])
+	if not(isempty(neighbors) && isempty(liens_plateformes))
+		nouveau = Goo(pos_new, (0.0,0.0), voisins, liens_plateformes)
 		push!(goos, nouveau)
 		nouveau
 	else
 		error("Pas le droit de mettre un goo ici, il ne crée pas de lien ! pos : $pos_new")
 	end
-		
 end
 
