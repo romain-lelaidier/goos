@@ -106,7 +106,7 @@ end
     function ajouter_goo!(goos, plateformes, position)
 FONCTION TEST EN BACK-UP.
 """
-function ajouter_goos!(goos, plateformes, position)
+function ajouter_goo!(goos, plateformes, position)
     velocity = (0.0, 0.0)
     neighbors = Vector{Tuple{Int, Float64}}()
     plateform_n = Vector{Tuple{Int, Tuple{Float64, Float64}, Float64}}()
