@@ -10,6 +10,14 @@ mutable struct Goo
     neighbors::Vector{Int}
 end
 
+"""Ce sont des rectangles, dont les coins sont :
+    topleft::Tuple{Float64, Float64}
+    bottomright::Tuple{Float64, Float64}"""
+struct plateform
+    topleft::Tuple{Float64, Float64}
+    bottomright::Tuple{Float64, Float64}
+end
+
 function forces()
 
 end
