@@ -2,9 +2,12 @@ using GLMakie
 GLMakie.activate!() # hide
 
 # PARAMETERS
-Wm = 4          # game boundaries : width (meters)
-dbd = 0.2       # game border length (meters)
-W, H = 900, 700 # screen dimensions (pixels)
+Wm = 1          # game boundaries : width (meters)
+dbd = 0.01       # game border length (meters)
+W, H = 700, 700 # screen dimensions (pixels)
+
+GoosRadius = 0.04
+GoosInteractionDistance = 0.2
 
 # don't touch this !!
 SCL = W / (Wm+2*dbd)
@@ -32,7 +35,8 @@ platforms = [
     Platform(-dbd, Wm+dbd, -dbd,    0.0),   # bottom border
     Platform(-dbd, Wm+dbd,   Hm, Hm+dbd),   # top border
 
-    Platform(0.5, 1.0, 0.5, 1.0)
+    Platform(0.0, 0.2, 0.2, 0.3),
+    Platform(0.8, 1.0, 0.7, 0.8)
 ]
 
 points = Observable(Point2f[])
@@ -52,14 +56,14 @@ for p in platforms
 end
 
 linesegments!(scene, segments, color=colors["green"], linewidth=7)
-scatter!(scene, points, color=colors["black"], markersize=20)
+scatter!(scene, points, color=colors["black"], markersize=GoosRadius*SCL)
 
 on(events(scene).mousebutton) do event
     if event.button == Mouse.left
         if event.action == Mouse.release
             # adding a Goo
             mp = events(scene).mouseposition[]
-            new_goos!(goos, [], pixelsToPos(mp))
+            new_goos!(goos, platforms, pixelsToPos(mp))
         end
     end
 end
