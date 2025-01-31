@@ -87,22 +87,31 @@ end
     function update_positions(goos, dt)
 Met à jour la position et la vitesse des goos après un pas de temps dt.
 """
-function update_positions!(goos, dt)
+function update_positions!(goos, platforms, dt)
     a = forces(goos)
 
     for i in 1:length(goos)
         goo = goos[i]
-        acc = a[i]
+        collision = nothing
+        for p in platforms
+            collision = static_collision(goo.position, goo.velocity, p, dt)
+        end
+        if isnothing(collision) #pas de collision avec une plateforme
+            acc = a[i]
 
-        # Mise à jour de la vitesse (Euler)
-        new_velocity = (goo.velocity[1] + acc[1] * dt, goo.velocity[2] + acc[2] * dt)
+            # Mise à jour de la vitesse (Euler)
+            new_velocity = (goo.velocity[1] + acc[1] * dt, goo.velocity[2] + acc[2] * dt)
         
-        # Mise à jour de la position (Euler)
-        new_position = (goo.position[1] + new_velocity[1] * dt, goo.position[2] + new_velocity[2] * dt)
+            # Mise à jour de la position (Euler)
+            new_position = (goo.position[1] + new_velocity[1] * dt, goo.position[2] + new_velocity[2] * dt)
 
-        # Appliquer la mise à jour
-        goo.velocity = new_velocity
-        goo.position = new_position
+            # Appliquer la mise à jour
+            goo.velocity = new_velocity
+            goo.position = new_position
+        else
+            goo.position = collision[1]
+            goo.velocity = collision[2]
+        end
     end
 end
 

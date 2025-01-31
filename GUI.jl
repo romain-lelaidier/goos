@@ -1,10 +1,22 @@
 using GLMakie
 GLMakie.activate!() # hide
 
-SCL = 400.
-pixelsToPos((px, py)) = (px / SCL, py / SCL)
-posToPixels((px, py)) = (px * SCL, py * SCL)
+# PARAMETERS
+Wm = 1          # game boundaries : width (meters)
+dbd = 0.01       # game border length (meters)
+W, H = 700, 700 # screen dimensions (pixels)
 
+GoosRadius = 0.04
+GoosInteractionDistance = 0.2
+
+# don't touch this !!
+SCL = W / (Wm+2*dbd)
+Hm = (Wm+2*dbd) * H/W - 2*dbd
+
+pixelsToPos((px, py)) = (px/SCL-dbd, py/SCL-dbd)
+posToPixels((px, py)) = ((px+dbd) * SCL, (py+dbd) * SCL)
+
+include("platforms.jl")
 include("ludivine.jl")
 include("mathis.jl")
 
@@ -17,20 +29,41 @@ colors = Dict(
 )
 
 goos = Goo[]
+platforms = [
+    Platform(-dbd,    0.0, -dbd, Hm+dbd),   # left border
+    Platform(  Wm, Wm+dbd, -dbd, Hm+dbd),   # right border
+    Platform(-dbd, Wm+dbd, -dbd,    0.0),   # bottom border
+    Platform(-dbd, Wm+dbd,   Hm, Hm+dbd),   # top border
+
+    Platform(0.0, 0.2, 0.2, 0.3),
+    Platform(0.8, 1.0, 0.7, 0.8)
+]
 
 points = Observable(Point2f[])
 segments = Observable(Point2f[])
 
-scene = Scene(camera = campixel!, backgroundcolor=colors["yellow"])
-linesegments!(scene, segments, color=colors["green"], linewidth=10)
-scatter!(scene, points, color=colors["black"], markersize=30)
+scene = Scene(
+    camera=campixel!,
+    backgroundcolor=colors["yellow"],
+    size=(W, H)
+)
+
+# drawing scene
+for p in platforms
+    x0, y0 = posToPixels((p.x_left, p.y_bottom))
+    x1, y1 = posToPixels((p.x_right, p.y_top))
+    poly!(scene, [ (x0, y0), (x0, y1), (x1, y1), (x1, y0) ], color=colors["red"])
+end
+
+linesegments!(scene, segments, color=colors["green"], linewidth=7)
+scatter!(scene, points, color=colors["black"], markersize=GoosRadius*SCL)
 
 on(events(scene).mousebutton) do event
     if event.button == Mouse.left
         if event.action == Mouse.release
             # adding a Goo
             mp = events(scene).mouseposition[]
-            new_goos!(goos, [], pixelsToPos(mp))
+            new_goos!(goos, platforms, pixelsToPos(mp))
         end
     end
 end
