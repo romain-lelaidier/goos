@@ -51,7 +51,7 @@ scene = Scene(
 )
 
 # drawing scene
-for p in platforms
+for p in collidable
     x0, y0 = posToPixels((p.x_left, p.y_bottom))
     x1, y1 = posToPixels((p.x_right, p.y_top))
     poly!(scene, [ (x0, y0), (x0, y1), (x1, y1), (x1, y0) ], color=colors["red"])
