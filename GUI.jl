@@ -95,6 +95,16 @@ function updateGoos(dt)
                 segi += 2
             end
         end
+        for (_, (x, y), _) in goo.plateform_n
+            if segi+1 <= length(segments[])
+                segments[][segi]   = screenPos[i]
+                segments[][segi+1] = posToPixels((x, y))
+            else
+                push!(segments[], screenPos[i])
+                push!(segments[], posToPixels((x, y)))
+            end
+            segi += 2
+        end
     end
 end
 
@@ -104,7 +114,7 @@ on(events(scene).tick) do tick
         notify(points)
         notify(segments)
     catch e
-        println("error", e)
+        rethrow(e)
     end
 end
 
