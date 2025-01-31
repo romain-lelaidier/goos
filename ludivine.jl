@@ -18,7 +18,7 @@ Renvoie a, un tableau contenant l'accélération pour chaque Goo.
 """
 function forces(goos)
     N = length(goos)
-    a = [0.0 for _ in 1:N]  # Initialisation des forces
+    a = [(0.0,0.0) for _ in 1:N]  # Initialisation des forces
     
     for i in 1:N 
         goo = goos[i]
