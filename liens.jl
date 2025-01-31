@@ -35,10 +35,10 @@ Si le goo peut être ajouté, il l'est et est renvoyé. Sinon on renvoie nothing
 function new_goos!(goos::Vector{Goo}, plateforms, obstacles, pos_new)
 	#On vérifie qu'on n'est pas dans une plateforme
 	for plateform ∈ plateforms
-		!in_platform(pos_new, plateform) || error("Vous avez essayé de mettre le goo dans une plateforme")
+		!in_platform(pos_new, plateform) || return nothing #error("Vous avez essayé de mettre le goo dans une plateforme")
 	end
 	for plateform ∈ obstacles
-		!in_platform(pos_new, plateform) || error("Vous avez essayé de mettre le goo dans une plateforme")
+		!in_platform(pos_new, plateform) || return nothing #error("Vous avez essayé de mettre le goo dans une plateforme")
 	end
 
 	#Vérification qu'on n'est pas trop proche
