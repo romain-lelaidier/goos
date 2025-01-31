@@ -65,14 +65,6 @@ function forces(goos)
     a
 end
 
-"""Ce sont des rectangles, dont les coins sont :
-    topleft::Tuple{Float64, Float64}
-    bottomright::Tuple{Float64, Float64}"""
-struct Platform
-    topleft::Tuple{Float64, Float64} #x,y
-    bottomright::Tuple{Float64, Float64} #x,y
-end
-
 
 function liens(goo::Goo)
 
