@@ -39,6 +39,7 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 
 	index_new_goo = length(goos) +1 #
 	voisins = Tuple{Int, Float64}[]
+
 	#On ajoute les liens vers les voisins
 	for (i, goo) ∈ enumerate(goos)
 		# Si la distance au goo est inférieure à 20 cm, l'ajouter en voisin
@@ -46,23 +47,26 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 
 			croise_pas = true
 			#On vérifie que les liens ne se croisent pas 
-			# for (j, goo_autre) ∈ enumerate(goos)
-			# 	if j ≠ i #On élimine tous les liens partant du goo auquel on veut se lier, vu qu'il partage ce goo il y aurait problème
-			# 		for (goo_voisin_autre, _) in goo_autre.neighbors
-			# 			if goo_voisin_autre ≠ i
-			# 				@show goos
-			# 				#Maintenant que l'on considère le bon lien, entre goo_autre et goo_voisin_autre, on vérifie qu'il croise pas
-			# 				croise_pas = segment_se_croisent((goo_autre.position, goos[goo_voisin_autre].position), (pos_new, goo.position))
-			# 				croise_pas || break
-			# 			end
-			# 		end
-			# 	end
-			# 	croise_pas || break
-			# end
+			for (j, goo_autre) ∈ enumerate(goos)
+				if j ≠ i #On élimine tous les liens partant du goo auquel on veut se lier, vu qu'il partage ce goo il y aurait problème
+					for (goo_voisin_autre, _) in goo_autre.neighbors
+						if goo_voisin_autre ≠ i && goo_voisin_autre < index_new_goo
+							@show goos
+							@show goo_voisin_autre
+							#Maintenant que l'on considère le bon lien, entre goo_autre et goo_voisin_autre, on vérifie qu'il croise pas
+							croise_pas = !(segment_se_croisent((goo_autre.position, goos[goo_voisin_autre].position), (pos_new, goo.position)))
+							croise_pas || break
+						end
+					end
+				end
+				croise_pas || break
+			end
+			
 			#TODO : vérifier que ça croise pas aussi les liens vers les plateformes
 			#TODO : vérifier aussi que ça croise pas les plateformes
 
 			if croise_pas
+				@show index_new_goo
 				push!(voisins, (i, norm(pos_new .- goo.position)))
 				push!(goo.neighbors, (index_new_goo, norm(pos_new .- goo.position)))
 			end
