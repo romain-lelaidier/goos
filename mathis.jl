@@ -1,12 +1,13 @@
 using LinearAlgebra: norm
 include("ludivine.jl")
+include("platforms.jl")
 
 """
 	function segment_se_croisent(segment1, segment2)
 	
 Renvoie un booléen, indiquant si les segments se croisent. Les segments sont représenté par un couple/tableau de positions
 """
-function segment_se_croisent(segment1, segment2)
+function segment_se_croisent(segment1, segment2, bord_inclus=true)
 	#Cf brouillon
 	#On utilise la caractérisation du segement en at + (1-t) b
 	p1s1, p2s1 = segment1
@@ -16,7 +17,11 @@ function segment_se_croisent(segment1, segment2)
 	#On résout matA X = mat B
 	x = matA \ matB
 
-	0 ≤ x[1] ≤ 1 && 0 ≤ x[2] ≤ 1
+	if bord_inclus
+		0 ≤ x[1] ≤ 1 && 0 ≤ x[2] ≤ 1
+	else
+		0 < x[1] < 1 && 0 < x[2] < 1
+	end
 end
 
 """
@@ -26,7 +31,9 @@ des goos pour éventuellement ajouter un lien vers le dernier.
 
 Si le goo peut être ajouté, il l'est et est renvoyé. Sinon on renvoie nothing (peut changer dans les versions futures)"""
 function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
-	index_new_goo = length(goos) +1
+	#TODO : vérifier qu'on n'est pas dans une plateforme
+
+	index_new_goo = length(goos) +1 #
 	voisins = Tuple{Int, Float64}[]
 	for (i, goo) ∈ enumerate(goos)
 		# Si la distance au goo est inférieure à 20 cm, l'ajouter en voisin
@@ -36,8 +43,15 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 		end
 	end
 	
+
+	liens_plateformes = Tuple{Int, Tuple{Float64, Float64}, Float64}[]
 	for (i, plateforme) in enumerate(plateforms)
-		 #TODO
+		 closest = projection(pos_new, plateforme)
+		 #S'accroche à la plateforme si elle est à moins de 10 cm
+		if norm(closest .- pos_new) < 0.10
+			push!(liens_plateformes, (i, closest, norm(closest .- pos_new)))
+		end
+	
 	end
 	
 	if not(isempty(neighbors) && isempty(plateform_n))
@@ -45,7 +59,7 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 		push!(goos, nouveau)
 		nouveau
 	else
-		nothing
+		error("Pas le droit de mettre un goo ici, il ne crée pas de lien ! pos : $pos_new")
 	end
 		
 end
