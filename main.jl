@@ -2,10 +2,15 @@
 using GLMakie
 GLMakie.activate!() # hide
 
+# modules internes
+using goosInterface
 
 
-points = Observable(Point2f[])
 
+goo = Observable{Goo}(0.,0.)
+
+
+# A MODIFIER
 scene = Scene(camera = campixel!)
 linesegments!(scene, points, color = :black)
 scatter!(scene, points, color = :gray)
