@@ -9,6 +9,7 @@ struct Platform
     y_top::Float64
 end
 
+# utilitaire pour la création de liens avec les plateformes
 """
 fonction projection(goo::Goo, platform::Platform)
 
@@ -27,6 +28,7 @@ function projection((x,y)::Tuple{Float64,Float64}, p::Platform)
 end
 
 
+# vérification qu'un goo ou un lien ne se trouve pas à l'intérieur d'une plateforme
 """
 fonction in_platform((x,y)::Tuple{Float64, Float64}, p::Platform)
 
@@ -49,7 +51,7 @@ function segment_se_croisent(segment1, segment2, bord_inclus=true)
 	#On utilise la caractérisation du segement en at + (1-t) b
 	p1s1, p2s1 = segment1
 	p1s2, p2s2 = segment2
-	matA = hcat(collect(p1s1 .- p1s2), collect(p2s2 .- p1s2))
+	matA = hcat(collect(p1s1 .- p2s1), collect(p2s2 .- p1s2))
 	matB = collect(p2s2 .- p2s1)
 	#On résout matA X = mat B
 	x = matA \ matB
@@ -59,6 +61,33 @@ function segment_se_croisent(segment1, segment2, bord_inclus=true)
 	else
 		0 < x[1] < 1 && 0 < x[2] < 1
 	end
+end
+
+"""
+	function intersection_segments(segment1, segment2)
+	
+    Si 2 segments se croisent, renvoie la coordonnée de l'intersection des 2 segments sous
+    forme de liste de 2 éléments
+    Sinon, renvoie nothing
+"""
+function intersection_segments(segment1, segment2)
+	#Cf brouillon
+	#On utilise la caractérisation du segement en at + (1-t) b
+	p1s1, p2s1 = segment1
+	p1s2, p2s2 = segment2
+	matA = hcat(collect(p1s1 .- p2s1), collect(p2s2 .- p1s2))
+	matB = collect(p2s2 .- p2s1)
+	#On résout matA X = mat B
+	x = matA \ matB
+
+	if 0 ≤ x[1] ≤ 1 && 0 ≤ x[2] ≤ 1
+        println("proportion du segment 1 : ",x[1])
+        println("proportion du segment 2 : ",x[2])
+        println("point d'intersection :", x[1].*p1s1 .+ (1-x[1]).*p2s1)
+        return collect(x[1].*p1s1 .+ (1-x[1]).*p2s1)
+    else
+        return nothing
+    end
 end
 
 
@@ -80,4 +109,67 @@ function link_check_platform((x1,y1)::Tuple{Float64,Float64},
     ||
     segment_se_croisent(((x1,y1),(x2,y2)),((p.x_left,p.y_top),(p.x_right,p.y_bottom)))
     )
+end
+
+
+# collision entre goo et plateforme
+"""
+fonction static_collision((x,y)::Tuple{Float64,Float64}, (vx,vy)::Tuple{Float64,Float64},
+                          p::Platform, dt::Float64)
+
+Entrée :
+    - (x,y) : position d'un goo à l'instant t
+    - (vx,vy) : vitesse d'un goo à l'instant t
+    - p : plateforme avec laquelle vérifier la collision
+    - dt : intervalle de temps
+
+Sortie :
+    S'il y a collision avec la plateforme :
+        (xp,yp),(vxp,vyp) : position et vitesse du goo à l'instant t+dt
+    Sinon :
+        nothing
+"""
+function static_collision((x,y)::Tuple{Float64,Float64}, (vx,vy)::Tuple{Float64,Float64},
+                          p::Platform, dt::Float64)
+    
+    # Calcul de la position à l'instant t+dt
+    xp,yp = x+dt*vx, y+dt*vy
+
+    # cas 1 : hors de la boîte
+    if !in_platform((xp,yp), p)
+        return nothing
+    else # la position d'arrivée est dans la boîte
+        interpos = nothing
+        bords = [((p.x_left, p.y_bottom),(p.x_right, p.y_bottom)), #bas
+                 ((p.x_right, p.y_bottom),(p.x_right, p.y_top)), #droite
+                 ((p.x_left, p.y_top),(p.x_right, p.y_top)), #haut
+                 ((p.x_left, p.y_bottom),(p.x_left, p.y_top)) #gauche
+                ]
+        i = 0
+
+        # trouver de quel bord il s'agit
+        while isnothing(interpos) && i <= 4
+            i += 1
+            interpos = intersection_segments(((x,y),(xp,yp)),bords[i])
+        end
+        isnothing(interpos) && throw("erreur collision avec une plateforme")
+
+        # calcul de la nouvelle vitesse
+        if i ∈ [1,3] #collision avec un élément horizontal => on inverse vy
+            vxp,vyp = vx,-vy
+        else #collision avec un élément vertical => on inverse vx
+            vxp,vyp = -vx,vy
+        end
+
+        # calcul de la nouvelle position
+        d = [xp,yp] - interpos
+        if i ∈ [1,3] #collision avec un élément horizontal
+            xp,yp = interpos[1] + d[1], interpos[2] - d[2]
+        else #collision avec un élément vertical
+            xp,yp = interpos[1] - d[1], interpos[2] + d[2]
+        end
+
+        return (xp,yp),(vxp,vyp)
+    end
+
 end
