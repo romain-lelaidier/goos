@@ -66,7 +66,7 @@ on(events(scene).mousebutton) do event
         if event.action == Mouse.release
             # adding a Goo
             mp = events(scene).mouseposition[]
-            new_goos!(goos, platforms, collidable, pixelsToPos(mp))
+            new_goos!(goos, platforms, borders, pixelsToPos(mp))
         end
     end
 end
