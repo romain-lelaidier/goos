@@ -94,8 +94,11 @@ function update_positions!(goos, platforms, dt)
         goo = goos[i]
         collision = nothing
         for p in platforms
-            collision = static_collision(goo.position, goo.velocity, p, dt)
+            if isnothing(collision)
+                collision = static_collision(goo.position, goo.velocity, p, dt)
+            end
         end
+
         if isnothing(collision) #pas de collision avec une plateforme
             acc = a[i]
 

@@ -30,13 +30,13 @@ colors = Dict(
 
 goos = Goo[]
 platforms = [
-    Platform(-dbd,    0.0, -dbd, Hm+dbd),   # left border
-    Platform(  Wm, Wm+dbd, -dbd, Hm+dbd),   # right border
-    Platform(-dbd, Wm+dbd, -dbd,    0.0),   # bottom border
-    Platform(-dbd, Wm+dbd,   Hm, Hm+dbd),   # top border
+    GooPlatform(-dbd,    0.0, -dbd, Hm+dbd),   # left border
+    GooPlatform(  Wm, Wm+dbd, -dbd, Hm+dbd),   # right border
+    GooPlatform(-dbd, Wm+dbd, -dbd,    0.0),   # bottom border
+    GooPlatform(-dbd, Wm+dbd,   Hm, Hm+dbd),   # top border
 
-    Platform(0.0, 0.2, 0.2, 0.3),
-    Platform(0.8, 1.0, 0.7, 0.8)
+    GooPlatform(0.0, 0.2, 0.2, 0.3),
+    GooPlatform(0.8, 1.0, 0.7, 0.8)
 ]
 
 points = Observable(Point2f[])
@@ -69,7 +69,7 @@ on(events(scene).mousebutton) do event
 end
 
 function updateGoos(dt)
-    update_positions!(goos, dt)
+    update_positions!(goos, platforms, dt)
 
     screenPos = [ posToPixels(goo.position) for goo in goos ]
 

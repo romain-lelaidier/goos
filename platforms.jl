@@ -130,7 +130,7 @@ Sortie :
         nothing
 """
 function static_collision((x,y)::Tuple{Float64,Float64}, (vx,vy)::Tuple{Float64,Float64},
-                          p::Platform, dt::Float64)
+                          p::GooPlatform, dt::Float64)
     
     # Calcul de la position à l'instant t+dt
     xp,yp = x+dt*vx, y+dt*vy
