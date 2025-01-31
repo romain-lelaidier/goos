@@ -38,6 +38,12 @@ function new_goos!(goos::Vector{Goo}, plateforms, obstacles, pos_new)
 		!in_platform(pos_new, plateform) || error("Vous avez essayé de mettre le goo dans une plateforme")
 	end
 
+	#Vérification qu'on n'est pas trop proche
+	for (_, goo) ∈ enumerate(goos)
+		norm(pos_new .- goo.position) >=0.02 || error("Pas de Goo sur un autre")
+	end
+
+
 	index_new_goo = length(goos) +1 #
 	voisins = Tuple{Int, Float64}[]
 
@@ -64,7 +70,13 @@ function new_goos!(goos::Vector{Goo}, plateforms, obstacles, pos_new)
 				croise_pas || break
 			end
 
-			#Vérification lien plateformes
+			#Vérification pas au travers plateformes
+			for plat in plateforms
+				croise_pas = link_check_platform(pos_new, goo.position, plat)
+				croise_pas || break
+			end
+
+			#Vérification pas au travers des obstacles 
 			for plat in plateforms
 				croise_pas = link_check_platform(pos_new, goo.position, plat)
 				croise_pas || break
@@ -94,7 +106,7 @@ function new_goos!(goos::Vector{Goo}, plateforms, obstacles, pos_new)
 	if !(isempty(voisins) && isempty(liens_plateformes)) #TODO mettre la bonne condition
 		nouveau = Goo(pos_new, (0.0,0.0), voisins, liens_plateformes)
 		push!(goos, nouveau)
-		nouveau
+		return nouveau
 	else
 		error("Pas le droit de mettre un goo ici, il ne crée pas de lien ! pos : $pos_new")
 	end
