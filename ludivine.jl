@@ -8,11 +8,19 @@ fr = 1         # Constante
 
 # Structure pour représenter un Goo
 mutable struct Goo
+    old_position::Tuple{Float64, Float64}
     position::Tuple{Float64, Float64}
     velocity::Tuple{Float64, Float64}
     neighbors::Vector{Tuple{Int, Float64}} # Liste des voisins et longueur à vide du ressort
     plateform_n::Vector{Tuple{Int, Tuple{Float64, Float64}, Float64}} # Liste des plateformes voisines, les positions des liens sur la plateforme, et longueur à vide du ressort
 end
+
+# On conserve l'ancienne déclaration
+function Goo(position::Tuple{Float64, Float64}, velocity::Tuple{Float64, Float64}, 
+             neighbors::Vector{Tuple{Int, Float64}}, plateform_n::Vector{Tuple{Int, Tuple{Float64, Float64}, Float64}})
+    Goo(position, position, velocity, neighbors, plateform_n)
+end
+
 
 """
     function force(goos)
@@ -101,15 +109,14 @@ function update_positions!(goos, collidable, dt)
         if isnothing(collision) #pas de collision avec une plateforme
             acc = a[i]
 
-            # Mise à jour de la vitesse (Euler)
-            new_velocity = (goo.velocity[1] + acc[1] * dt, goo.velocity[2] + acc[2] * dt)
-        
-            # Mise à jour de la position (Euler)
-            new_position = (goo.position[1] + new_velocity[1] * dt, goo.position[2] + new_velocity[2] * dt)
+            # Mise à jour de la position (Verlet)
+            old_position = goo.position
+            goo.position = 2 .* goo.position .- goo.old_position .+ (dt)^2 .* acc
+            goo.old_position = old_position
 
-            # Appliquer la mise à jour
-            goo.velocity = new_velocity
-            goo.position = new_position
+            # Mise à jour de la vitesse (Euler explicite)
+            goo.velocity = goo.velocity .+ dt .* acc
+        
         else
             goo.position = collision[1]
             goo.velocity = collision[2]
