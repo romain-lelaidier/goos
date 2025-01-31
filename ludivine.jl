@@ -18,7 +18,7 @@ Renvoie a, un tableau contenant l'accélération pour chaque Goo.
 """
 function forces(goos)
     N = length(goos)
-    a = [0.0 for _ in 1:N]  # Initialisation des forces
+    a = [(0.0,0.0) for _ in 1:N]  # Initialisation des forces
     
     for i in 1:N 
         goo = goos[i]
@@ -63,14 +63,6 @@ function forces(goos)
     end    
     
     a
-end
-
-"""Ce sont des rectangles, dont les coins sont :
-    topleft::Tuple{Float64, Float64}
-    bottomright::Tuple{Float64, Float64}"""
-struct Platform
-    topleft::Tuple{Float64, Float64} #x,y
-    bottomright::Tuple{Float64, Float64} #x,y
 end
 
 
