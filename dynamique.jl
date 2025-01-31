@@ -4,7 +4,7 @@ using LinearAlgebra: norm
 g = 9.81 / 20  # Gravité 
 k = 100.0      # Raideur du ressort (J/m²)
 m = 0.4        # Masse des Goos (400 g)
-fr = 1         # Constante 
+fr = 0.5         # Constante 
 
 # Structure pour représenter un Goo
 mutable struct Goo
