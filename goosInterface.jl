@@ -1,3 +1,5 @@
+using GLMakie
+
 struct Goo
     x::Float64
     y::Float64

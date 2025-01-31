@@ -68,9 +68,9 @@ end
 """Ce sont des rectangles, dont les coins sont :
     topleft::Tuple{Float64, Float64}
     bottomright::Tuple{Float64, Float64}"""
-struct plateform
-    topleft::Tuple{Float64, Float64}
-    bottomright::Tuple{Float64, Float64}
+struct Platform
+    topleft::Tuple{Float64, Float64} #x,y
+    bottomright::Tuple{Float64, Float64} #x,y
 end
 
 
@@ -101,3 +101,25 @@ function update_positions!(goos, dt)
     end
 end
 
+
+"""
+    function ajouter_goo!(goos, plateformes, position)
+FONCTION TEST EN BACK-UP.
+"""
+function ajouter_goo!(goos, plateformes, position)
+    velocity = (0.0, 0.0)
+    neighbors = Vector{Tuple{Int, Float64}}()
+    plateform_n = Vector{Tuple{Int, Tuple{Float64, Float64}, Float64}}()
+
+    # Ajouter les Goos voisins et les plateformes liées avec la fonction lien
+
+
+    # Vérification : un Goo doit avoir au moins un lien
+    if isempty(neighbors) && isempty(plateform_n)
+        println("Impossible d'ajouter le Goo : aucun lien possible !")
+        return
+    end
+
+    # Ajouter le Goo à la liste
+    push!(goos, Goo(position, velocity, neighbors, plateform_n))
+end

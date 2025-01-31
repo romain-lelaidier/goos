@@ -1,28 +1,17 @@
 # imports
 using GLMakie
-GLMakie.activate!() # hide
 
-# modules internes
-using goosInterface
+goo_coords = 0,0
+goo = Observable{Tuple{Float64,Float64}}(goo_coords)
 
-
-
-goo = Observable{Goo}(0.,0.)
+HEIGHT,WIDTH = 400,400
+area = Observable(Rect2{Int}(0,0,HEIGHT, WIDTH))
 
 
-# A MODIFIER
-scene = Scene(camera = campixel!)
-linesegments!(scene, points, color = :black)
-scatter!(scene, points, color = :gray)
+scene = Scene(camera = campixel!, viewport=area)
 
-on(events(scene).mousebutton) do event
-    if event.button == Mouse.left
-        if event.action == Mouse.press || event.action == Mouse.release
-            mp = events(scene).mouseposition[]
-            push!(points[], mp)
-            notify(points)
-        end
-    end
-end
+
+scatter!(scene, 200, 200; color=:black)
+
 
 scene
