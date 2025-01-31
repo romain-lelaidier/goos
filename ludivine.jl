@@ -1,5 +1,4 @@
 using LinearAlgebra: norm
-using Polynomials
 
 # Constantes du problème
 g = 9.81 / 20  # Gravité 
@@ -49,7 +48,7 @@ function forces(goos)
             end
 
             if dist < 0.4
-                repulsion = 1/dist^3
+                repulsion = -1/dist^3
                 F_repulsion =(F_repulsion[1] + repulsion * direction[1], F_repulsion[2] +  repulsion * direction[2])
             end
 
