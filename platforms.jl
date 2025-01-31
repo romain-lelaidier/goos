@@ -93,9 +93,6 @@ function intersection_segments(segment1, segment2)
 	x = matA \ matB
 
 	if 0 ≤ x[1] ≤ 1 && 0 ≤ x[2] ≤ 1
-        println("proportion du segment 1 : ",x[1])
-        println("proportion du segment 2 : ",x[2])
-        println("point d'intersection :", x[1].*p1s1 .+ (1-x[1]).*p2s1)
         return collect(x[1].*p1s1 .+ (1-x[1]).*p2s1)
     else
         return nothing
@@ -160,11 +157,12 @@ function static_collision((x,y)::Tuple{Float64,Float64}, (vx,vy)::Tuple{Float64,
         i = 0
 
         # trouver de quel bord il s'agit
-        while isnothing(interpos) && i <= 4
+        while isnothing(interpos) && i <= 3
             i += 1
             interpos = intersection_segments(((x,y),(xp,yp)),bords[i])
         end
-        isnothing(interpos) && throw("erreur collision avec une plateforme")
+        # s'il il n'y rien, le goo n'a pas bougé
+        isnothing(interpos) && return (xp,yp),(0.,0.)
 
         # calcul de la nouvelle vitesse
         if i ∈ [1,3] #collision avec un élément horizontal => on inverse vy
