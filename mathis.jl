@@ -1,5 +1,6 @@
 using LinearAlgebra: norm
 include("ludivine.jl")
+include("platforms.jl")
 
 """
 	function segment_se_croisent(segment1, segment2)
@@ -26,7 +27,7 @@ des goos pour éventuellement ajouter un lien vers le dernier.
 
 Si le goo peut être ajouté, il l'est et est renvoyé. Sinon on renvoie nothing (peut changer dans les versions futures)"""
 function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
-	index_new_goo = length(goos) +1
+	index_new_goo = length(goos) +1 #
 	voisins = Tuple{Int, Float64}[]
 	for (i, goo) ∈ enumerate(goos)
 		#Si la distance au goo est inférieure à 20cm, l'ajouter en voisin
@@ -36,8 +37,15 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 		end
 	end
 	
+
+	liens_plateformes = Tuple{Int, Tuple{Float64, Float64}, Float64}[]
 	for (i, plateforme) in enumerate(plateforms)
-		 #TODO
+		 closest = projection(pos_new, plateforme)
+		 #S'accroche à la plateforme si elle est à moins de 10 cm
+		if norm(closest .- pos_new) < 0.10
+			push!(liens_plateformes, (i, closest, norm(closest .- pos_new)))
+		end
+	
 	end
 	
 	if true #length(voisins) >0 #TODO, faut remettre la vrai condition
