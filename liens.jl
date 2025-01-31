@@ -1,5 +1,5 @@
 using LinearAlgebra: norm
-include("ludivine.jl")
+include("dynamique.jl")
 include("platforms.jl")
 
 """
@@ -37,10 +37,13 @@ function new_goos!(goos::Vector{Goo}, plateforms, obstacles, pos_new)
 	for plateform ∈ plateforms
 		!in_platform(pos_new, plateform) || error("Vous avez essayé de mettre le goo dans une plateforme")
 	end
+	for plateform ∈ obstacles
+		!in_platform(pos_new, plateform) || error("Vous avez essayé de mettre le goo dans une plateforme")
+	end
 
 	#Vérification qu'on n'est pas trop proche
 	for (_, goo) ∈ enumerate(goos)
-		norm(pos_new .- goo.position) >=0.02 || error("Pas de Goo sur un autre")
+		norm(pos_new .- goo.position) >=0.02 || return nothing # error("Pas de Goo sur un autre")
 	end
 
 
@@ -77,7 +80,7 @@ function new_goos!(goos::Vector{Goo}, plateforms, obstacles, pos_new)
 			end
 
 			#Vérification pas au travers des obstacles 
-			for plat in plateforms
+			for plat in obstacles
 				croise_pas = link_check_platform(pos_new, goo.position, plat)
 				croise_pas || break
 			end
@@ -108,7 +111,7 @@ function new_goos!(goos::Vector{Goo}, plateforms, obstacles, pos_new)
 		push!(goos, nouveau)
 		return nouveau
 	else
-		error("Pas le droit de mettre un goo ici, il ne crée pas de lien ! pos : $pos_new")
+		return nothing # error("Pas le droit de mettre un goo ici, il ne crée pas de lien ! pos : $pos_new")
 	end
 end
 

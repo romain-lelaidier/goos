@@ -17,8 +17,8 @@ pixelsToPos((px, py)) = (px/SCL-dbd, py/SCL-dbd)
 posToPixels((px, py)) = ((px+dbd) * SCL, (py+dbd) * SCL)
 
 include("platforms.jl")
-include("ludivine.jl")
-include("mathis.jl")
+include("dynamique.jl")
+include("liens.jl")
 
 colors = Dict(
     "yellow" => "#E9C46A",
@@ -34,6 +34,7 @@ borders = [
     Border(  Wm, Wm+dbd, -dbd, Hm+dbd),   # right border
     Border(-dbd, Wm+dbd, -dbd,    0.0),   # bottom border
     Border(-dbd, Wm+dbd,   Hm, Hm+dbd),   # top border
+    #Border(Wm/2, Wm/2+dbd,   Hm, Hm/2),   # Extra border for more fun
 ]
 platforms = [
     GooPlatform(0.0, 0.2, 0.2, 0.3),
