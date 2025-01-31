@@ -1,5 +1,5 @@
 using LinearAlgebra: norm
-include("ludivine.jl")
+include("dynamique.jl")
 include("platforms.jl")
 
 """
@@ -35,6 +35,9 @@ Si le goo peut être ajouté, il l'est et est renvoyé. Sinon on renvoie nothing
 function new_goos!(goos::Vector{Goo}, plateforms, obstacles, pos_new)
 	#On vérifie qu'on n'est pas dans une plateforme
 	for plateform ∈ plateforms
+		!in_platform(pos_new, plateform) || error("Vous avez essayé de mettre le goo dans une plateforme")
+	end
+	for plateform ∈ obstacles
 		!in_platform(pos_new, plateform) || error("Vous avez essayé de mettre le goo dans une plateforme")
 	end
 
@@ -77,7 +80,7 @@ function new_goos!(goos::Vector{Goo}, plateforms, obstacles, pos_new)
 			end
 
 			#Vérification pas au travers des obstacles 
-			for plat in plateforms
+			for plat in obstacles
 				croise_pas = link_check_platform(pos_new, goo.position, plat)
 				croise_pas || break
 			end
