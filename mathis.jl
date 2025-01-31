@@ -59,7 +59,7 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 	
 	end
 	
-	if not(isempty(neighbors) && isempty(liens_plateformes))
+	if true #not(isempty(neighbors) && isempty(liens_plateformes))
 		nouveau = Goo(pos_new, (0.0,0.0), voisins, liens_plateformes)
 		push!(goos, nouveau)
 		nouveau
