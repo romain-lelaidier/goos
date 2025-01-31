@@ -1,5 +1,15 @@
 using LinearAlgebra:det
 
+"""
+Sert à faire les bordures (collisions élastiques mais pas de liens)
+"""
+struct Border
+    x_left::Float64
+    x_right::Float64
+    y_bottom::Float64
+    y_top::Float64
+end
+
 """Ce sont des rectangles, dont les coins sont donnés par:
     x_left, x_right, y_bottom, y_top"""
 struct GooPlatform
@@ -35,7 +45,7 @@ fonction in_platform((x,y)::Tuple{Float64, Float64}, p::Platform)
 renvoie true si la position (x,y) se trouve à l'intérieur de la plateforme p 
 (bords inclus)
 """
-function in_platform((x,y)::Tuple{Float64,Float64}, p::GooPlatform)
+function in_platform((x,y)::Tuple{Float64,Float64}, p::Union{GooPlatform, Border})
     p.x_left ≤ x ≤ p.x_right && p.y_bottom ≤ y ≤ p.y_top
 end
 
@@ -112,7 +122,7 @@ Renvoie false si le lien entre (x1,y1) et (x2,y2) traverse la plateforme p
 """
 function link_check_platform((x1,y1)::Tuple{Float64,Float64}, 
                              (x2,y2)::Tuple{Float64,Float64},
-                             p::GooPlatform)
+                             p::Union{GooPlatform, Border})
     !(
     segment_se_croisent(((x1,y1),(x2,y2)),((p.x_left,p.y_bottom),(p.x_right,p.y_top)))
     ||
@@ -139,7 +149,7 @@ Sortie :
         nothing
 """
 function static_collision((x,y)::Tuple{Float64,Float64}, (vx,vy)::Tuple{Float64,Float64},
-                          p::GooPlatform, dt::Float64)
+                          p::Union{GooPlatform, Border}, dt::Float64)
     
     # Calcul de la position à l'instant t+dt
     xp,yp = x+dt*vx, y+dt*vy

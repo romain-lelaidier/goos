@@ -86,13 +86,13 @@ end
     function update_positions(goos, dt)
 Met à jour la position et la vitesse des goos après un pas de temps dt.
 """
-function update_positions!(goos, platforms, dt)
+function update_positions!(goos, collidable, dt)
     a = forces(goos)
 
     for i in 1:length(goos)
         goo = goos[i]
         collision = nothing
-        for p in platforms
+        for p in collidable
             if isnothing(collision)
                 collision = static_collision(goo.position, goo.velocity, p, dt)
             end
