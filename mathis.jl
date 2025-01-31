@@ -43,6 +43,23 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 	for (i, goo) ∈ enumerate(goos)
 		# Si la distance au goo est inférieure à 20 cm, l'ajouter en voisin
 		if norm(pos_new .- goo.position) < 0.20
+
+			croise_pas = true
+			#On vérifie que les liens ne se croisent pas 
+			for (j, goo_autre) ∈ enumerate(goos)
+				if j ≠ i #On élimine tous les liens partant du goo auquel on veut se lier, vu qu'il partage ce goo il y aurait problème
+					for (goo_voisin_autre, _) in goo_autre.neighbors
+						if goo_voisin_autre ≠ i
+							#Maintenant que l'on considère le bon lien, entre goo_autre et goo_voisin_autre, on vérifie qu'il croise pas
+							croise_pas = segment_se_croisent((goo_autre.position, goo_voisin_autre.position), (pos_new, goo.position))
+							croise_pas || break
+						end
+					end
+				end
+				croise_pas || break
+			end
+			#TODO : vérifier que ça croise pas aussi les liens vers les plateformes
+			#TODO : vérifier aussi que ça croise pas les plateformes
 			push!(voisins, (i, norm(pos_new .- goo.position)))
 			push!(goo.neighbors, (index_new_goo, norm(pos_new .- goo.position)))
 		end
@@ -56,10 +73,10 @@ function new_goos!(goos::Vector{Goo}, plateforms, pos_new)
 		if norm(closest .- pos_new) < 0.10
 			push!(liens_plateformes, (i, closest, norm(closest .- pos_new)))
 		end
-	
+
 	end
 	
-	if true #not(isempty(neighbors) && isempty(liens_plateformes))
+	if true #!(isempty(voisins) && isempty(liens_plateformes)) #TODO mettre la bonne condition
 		nouveau = Goo(pos_new, (0.0,0.0), voisins, liens_plateformes)
 		push!(goos, nouveau)
 		nouveau
